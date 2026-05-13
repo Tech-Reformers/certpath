@@ -1,8 +1,8 @@
 # CertPath Fork — Review & Contribution Plan
 
 **Owner:** John Krull (jkrull@techreformers.com)
-**Last updated:** 2026-05-05
-**Status:** Review complete; PR sequence not yet started.
+**Last updated:** 2026-05-13
+**Status:** PR #1 opened against upstream, awaiting review. Security disclosure email pending.
 
 ---
 
@@ -84,7 +84,7 @@ One branch per PR. Each PR is independent and can be reviewed/merged in any orde
 
 ## Status tracker
 
-- [ ] PR #1 — `fix/ec2-setup-branch-casing`
+- [ ] PR #1 — `fix/ec2-setup-branch-casing` — **opened** https://github.com/davidodediran/certpath/pull/1 (awaiting review)
 - [ ] PR #2 — `fix/exam-review-idor` *(coordinate disclosure first)*
 - [ ] PR #3 — `fix/remove-default-passwords` *(coordinate disclosure first)*
 - [ ] PR #4 — `fix/cors-allowlist` *(coordinate disclosure first)*
