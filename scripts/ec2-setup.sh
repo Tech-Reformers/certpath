@@ -48,7 +48,7 @@ SUPER_PASSWORD=""
 # DO NOT EDIT ANYTHING BELOW THIS LINE
 # ============================================================
 
-GITHUB_REPO="davidodediran/certpath"
+GITHUB_REPO="Tech-Reformers/certpath"
 GITHUB_BRANCH="dev"
 APP_DIR="~/certpath"
 APP_PORT="3001"
