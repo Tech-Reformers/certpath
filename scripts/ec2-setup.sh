@@ -108,6 +108,20 @@ else
 fi
 echo "Repo ready at $APP_DIR"
 
+# ── Determine the public URL for CORS allowlist ──────────────────────────────
+# Use the EC2 public IPv4 from the instance metadata service. If you have a
+# domain pointing at this instance, set PUBLIC_URL above to override.
+PUBLIC_IP="$(curl -sf http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || true)"
+if [ -n "${PUBLIC_URL:-}" ]; then
+  ALLOWED_ORIGINS="$PUBLIC_URL"
+elif [ -n "$PUBLIC_IP" ]; then
+  ALLOWED_ORIGINS="http://$PUBLIC_IP"
+else
+  ALLOWED_ORIGINS=""
+  echo "WARNING: could not determine public IP — ALLOWED_ORIGINS is empty. The app will reject all cross-origin requests until you edit backend/.env."
+fi
+echo "CORS allowlist: $ALLOWED_ORIGINS"
+
 # ── Write backend/.env ────────────────────────────────────────────────────────
 echo "--- Writing backend/.env ---"
 mkdir -p "$APP_DIR/backend"
@@ -120,6 +134,7 @@ ADMIN_EMAIL=$ADMIN_EMAIL
 ADMIN_PASSWORD=$ADMIN_PASSWORD
 SUPER_EMAIL=$SUPER_EMAIL
 SUPER_PASSWORD=$SUPER_PASSWORD
+ALLOWED_ORIGINS=$ALLOWED_ORIGINS
 ENVEOF
 chmod 600 "$APP_DIR/backend/.env"
 echo ".env written (permissions: 600)"
