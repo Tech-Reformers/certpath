@@ -2,10 +2,21 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { authenticator } = require('otplib');
+const rateLimit = require('express-rate-limit');
 const db = require('../db/connection');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Rate limiter for unauthenticated auth endpoints (login, MFA verify).
+// Caps attempts per IP to slow online brute-force / credential-stuffing.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many attempts. Please try again later.' },
+});
 
 // Seed admin on first use if not in DB. Fails closed if env vars are missing —
 // never seed with hardcoded defaults.
@@ -44,7 +55,7 @@ async function getOrCreateSuperUser() {
 }
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
   const { email, cohortCode, password } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -182,7 +193,7 @@ router.post('/login', async (req, res) => {
 // POST /api/auth/mfa/verify — verify TOTP code after password success
 // Handles teacher, admin, and superuser roles via the 'role' field in mfaToken
 // Body: { mfaToken, code }
-router.post('/mfa/verify', async (req, res) => {
+router.post('/mfa/verify', authLimiter, async (req, res) => {
   try {
   const { mfaToken, code } = req.body;
   if (!mfaToken || !code) return res.status(400).json({ error: 'Token and code are required' });
