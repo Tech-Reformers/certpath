@@ -560,6 +560,10 @@ router.get('/:id/review', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const session = await db('exam_sessions').where({ id }).first();
   if (!session) return res.status(404).json({ error: 'Session not found' });
+  const isStaff = req.user.isAdmin || req.user.isSuperUser || req.user.isTeacher;
+  if (!isStaff && session.student_id !== req.user.studentId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   if (session.mode === 'exam' && !session.submitted_at) return res.status(400).json({ error: 'Exam not yet submitted' });
 
   const questionIds = parseJsonField(session.question_ids, []);
