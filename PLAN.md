@@ -1,8 +1,8 @@
 # CertPath Fork — Review & Contribution Plan
 
 **Owner:** John Krull (jkrull@techreformers.com)
-**Last updated:** 2026-05-13
-**Status:** PR #1 opened against upstream, awaiting review. Security disclosure email pending.
+**Last updated:** 2026-05-14
+**Status:** Fork is fully patched against the 5 blocking findings (#2-4 fork-only, #5 also upstream-PR'd, #6 fork-only). Upstream: PR #1 + PR #5 awaiting review; disclosure email (PRs #2-4) sent 2026-05-13. Fork is deployment-ready pending student rollout.
 
 ---
 
@@ -84,12 +84,12 @@ One branch per PR. Each PR is independent and can be reviewed/merged in any orde
 
 ## Status tracker
 
-- [ ] PR #1 — `fix/ec2-setup-branch-casing` — **opened** https://github.com/davidodediran/certpath/pull/1 (awaiting review)
-- [ ] PR #2 — `fix/exam-review-idor` *(coordinate disclosure first)*
-- [ ] PR #3 — `fix/remove-default-passwords` *(coordinate disclosure first)*
-- [ ] PR #4 — `fix/cors-allowlist` *(coordinate disclosure first)*
-- [ ] PR #5 — `fix/auth-rate-limit`
-- [ ] Fork-only branch — `chore/fork-deploy-config`
+- [ ] PR #1 — `fix/ec2-setup-branch-casing` — **opened upstream** https://github.com/davidodediran/certpath/pull/1 (awaiting review)
+- [x] PR #2 — `fix/exam-review-idor` — **merged to fork main** 2026-05-14; branch preserved on fork for potential upstream retargeting
+- [x] PR #3 — `fix/remove-default-passwords` — **merged to fork main** 2026-05-14; branch preserved
+- [x] PR #4 — `fix/cors-allowlist` — **merged to fork main** 2026-05-14; branch preserved
+- [ ] PR #5 — `fix/auth-rate-limit` — **merged to fork main** 2026-05-14; upstream PR to be opened against `davidodediran/certpath`
+- [x] PR #6 — `chore/fork-deploy-config` — **committed to fork main** 2026-05-14 (no branch — fork-only forever)
 - [ ] Fork deployed and verified for student use
 
 ---
