@@ -30,6 +30,7 @@ services:
       ADMIN_PASSWORD: admin1234
       SUPER_EMAIL: super@localhost.dev
       SUPER_PASSWORD: super1234
+      ALLOWED_ORIGINS: http://localhost,http://localhost:80,http://localhost:5173,http://localhost:3001
     volumes:
       - uploads_data:/app/uploads
       - ./backend/data:/app/data

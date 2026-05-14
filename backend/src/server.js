@@ -11,8 +11,21 @@ const PORT = process.env.PORT || 3001;
 app.set('trust proxy', true);
 
 // Middleware
+// CORS allowlist: comma-separated list of allowed origins in ALLOWED_ORIGINS.
+// In production, set this to the public URL(s) of the deployed app.
+// In development, set ALLOWED_ORIGINS=http://localhost,http://localhost:5173 etc.
+// Requests with no Origin header (server-to-server, curl) are allowed through.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: true,        // reflects request origin — works for HTTP and HTTPS
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
