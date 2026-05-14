@@ -7,28 +7,35 @@ const { authMiddleware, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Seed admin on first use if not in DB
+// Seed admin on first use if not in DB. Fails closed if env vars are missing —
+// never seed with hardcoded defaults.
 async function getOrCreateAdmin() {
   let admin = await db('admin_settings').first();
   if (!admin) {
-    const defaultEmail = process.env.ADMIN_EMAIL || 'admin@examapp.com';
-    const defaultPassword = process.env.ADMIN_PASSWORD || 'sesan174';
-    const hash = await bcrypt.hash(defaultPassword, 10);
-    [admin] = await db('admin_settings').insert({ email: defaultEmail, password_hash: hash }).returning('*');
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+    if (!email || !password) {
+      throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set before seeding the admin account. Refusing to seed with defaults.');
+    }
+    const hash = await bcrypt.hash(password, 10);
+    [admin] = await db('admin_settings').insert({ email: email.trim().toLowerCase(), password_hash: hash }).returning('*');
   }
   return admin;
 }
 
-// Seed superuser on first use if not in DB
+// Seed superuser on first use if not in DB. Fails closed if env vars are missing.
 async function getOrCreateSuperUser() {
   let su = await db('superusers').where({ active: true }).first();
   if (!su) {
-    const defaultEmail = process.env.SUPER_EMAIL || 'super@examapp.com';
-    const defaultPassword = process.env.SUPER_PASSWORD || 'super@rt2025';
-    const hash = await bcrypt.hash(defaultPassword, 10);
+    const email = process.env.SUPER_EMAIL;
+    const password = process.env.SUPER_PASSWORD;
+    if (!email || !password) {
+      throw new Error('SUPER_EMAIL and SUPER_PASSWORD must be set before seeding the superuser account. Refusing to seed with defaults.');
+    }
+    const hash = await bcrypt.hash(password, 10);
     [su] = await db('superusers').insert({
       name: 'Super Admin',
-      email: defaultEmail,
+      email: email.trim().toLowerCase(),
       password_hash: hash,
       active: true,
     }).returning('*');
